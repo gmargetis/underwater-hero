@@ -54,18 +54,37 @@
     background: #000814;
   }
 
-  /* ─── 1. cinematic underwater video (parallax-driven) ──────── */
-  .bg-video {
+  /* ─── 1. live 3D scene (Sketchfab Bonaire Coral Reef) ──────── */
+  .scene-3d {
     position: absolute;
-    inset: -6%;                  /* extra room for parallax shift */
-    width: 112%;
-    height: 112%;
-    object-fit: cover;
+    inset: -2%;
+    width: 104%;
+    height: 104%;
     z-index: 0;
-    will-change: transform;
-    transform: scale(1.08);
-    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
-    filter: saturate(1.12) contrast(1.04) brightness(0.78);
+    overflow: hidden;
+    /* lift the scene a hair so the bottom Sketchfab logo sits
+       just below the visible hero area */
+    transform: translateY(-2%);
+  }
+  .scene-3d iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 110%;        /* push Sketchfab's bottom strip out of view */
+    border: 0;
+    pointer-events: auto; /* let user drag-rotate the scene */
+    filter: saturate(1.05) contrast(1.02) brightness(0.92);
+  }
+  /* the rest of the scene continues. legacy class kept for poster fallback */
+  .bg-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    background:
+      url('https://images.unsplash.com/photo-1559825481-12a05cc00344?auto=format&fit=crop&w=2400&q=80')
+      center/cover no-repeat;
+    filter: saturate(1.1) contrast(1.04) brightness(0.78);
   }
 
   /* ─── 2. atmospheric tint + dark gradient (depth + readability) ── */
@@ -528,14 +547,21 @@
 <body>
 
 <div class="hero" id="hero">
-  <!-- 1. cinematic underwater video — pure, no overlays -->
-  <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true"
-         poster="https://images.unsplash.com/photo-1559825481-12a05cc00344?auto=format&fit=crop&w=2400&q=80">
-    <!-- TODO BG_VIDEO -->
-    <source src="https://assets.mixkit.co/videos/44868/44868-720.mp4" type="video/mp4">
-    <source src="https://assets.mixkit.co/videos/44976/44976-720.mp4" type="video/mp4">
-    <source src="https://assets.mixkit.co/videos/12816/12816-720.mp4" type="video/mp4">
-  </video>
+  <!-- 1. live 3D scene (Sketchfab) + image fallback below for slow connections -->
+  <div class="scene-3d" aria-label="Bonaire Coral Reef — interactive 3D scene">
+    <iframe
+      title="Bonaire Coral Reef"
+      src="https://sketchfab.com/models/3df6a1fa57664243a81e948bb20936e5/embed?autospin=0.3&autostart=1&preload=1&ui_infos=0&ui_inspector=0&ui_stop=0&ui_settings=0&ui_vr=0&ui_help=0&ui_annotations=0&ui_watermark_link=0&ui_watermark=0&ui_hint=0&ui_ar=0&ui_color=7feacf&dnt=1"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      allowfullscreen
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+      execution-while-out-of-viewport
+      execution-while-not-rendered
+      web-share>
+    </iframe>
+  </div>
+  <div class="bg-video" aria-hidden="true"></div>
 
   <!-- 2. atmospheric scrim -->
   <div class="scrim" aria-hidden="true"></div>
@@ -744,25 +770,21 @@ if (!reduce) {
   for (let i = 0; i < counts.front; i++) makeBubble(front, [10, 28], [7, 14]);
 }
 
-/* ─── 5. mouse parallax (layered drift) ───────────────────────────── */
-const bgVideo  = document.getElementById('bgVideo');
+/* ─── 5. mouse parallax (layered drift, 3D scene rotates itself) ─── */
 const fishBack  = document.getElementById('fishBack');
 const fishFront = document.getElementById('fishFront');
 const ui = document.getElementById('ui');
 let targetX = 0, targetY = 0;
 let curX = 0, curY = 0;
-const PARALLAX = { video: 6, fishBack: 14, fishFront: 28, ui: 4 };
+const PARALLAX = { fishBack: 14, fishFront: 28, ui: 4 };
 
 window.addEventListener('mousemove', e => {
-  // -1 .. +1 from the center
   targetX = (e.clientX / window.innerWidth)  * 2 - 1;
   targetY = (e.clientY / window.innerHeight) * 2 - 1;
 });
 function tickParallax() {
-  // ease toward target (low-pass filter)
   curX += (targetX - curX) * 0.08;
   curY += (targetY - curY) * 0.08;
-  bgVideo.style.transform   = `scale(1.08) translate3d(${-curX * PARALLAX.video}px,    ${-curY * PARALLAX.video}px,    0)`;
   fishBack.style.transform  = `translate3d(${-curX * PARALLAX.fishBack}px,  ${-curY * PARALLAX.fishBack}px,  0)`;
   fishFront.style.transform = `translate3d(${-curX * PARALLAX.fishFront}px, ${-curY * PARALLAX.fishFront}px, 0)`;
   ui.style.transform        = `translate3d(${-curX * PARALLAX.ui}px,        ${-curY * PARALLAX.ui}px,        0)`;
