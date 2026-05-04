@@ -74,62 +74,171 @@
     pointer-events: none; /* we re-enable on interactive elements */
   }
 
-  /* ─── header ─────────────────────────────────────────────────────── */
-  header.nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 28px clamp(20px, 5vw, 64px) 0;
+  /* ─── header (two rows: top brand+primary, bottom sub-nav) ─────── */
+  .header {
     pointer-events: auto;
   }
-  .logo {
-    font-weight: 300;
-    letter-spacing: 0.4em;
-    font-size: 14px;
-    text-transform: uppercase;
-    color: var(--ink);
-    /* caustic overlay + wobble */
-    position: relative;
-    filter: url(#wobble);
-  }
-  .logo::after {
-    content: "";
-    position: absolute; inset: 0;
-    background: var(--caustic-bg);
-    background-size: 240px 240px;
-    mix-blend-mode: overlay;
-    opacity: 0.55;
-    pointer-events: none;
-    animation: drift 28s linear infinite;
-  }
-  nav ul {
+  .header-row {
     display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 clamp(20px, 5vw, 64px);
+  }
+  .header-row.top    { padding-top: 22px; padding-bottom: 18px; }
+  .header-row.bottom {
+    padding-top: 14px; padding-bottom: 14px;
+    border-top: 1px solid rgba(232, 245, 250, 0.10);
+    gap: clamp(10px, 2vw, 22px);
+  }
+
+  /* — brand — */
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    color: var(--ink);
+    text-decoration: none;
+    filter: url(#wobble);
+    flex: 0 0 auto;
+  }
+  .brand-name {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: clamp(20px, 2.4vw, 28px);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+  }
+  .brand-name em {
+    font-style: italic;
+    font-weight: 400;
+  }
+  .brand-est {
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* — primary nav (top row) — */
+  .primary-nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
     gap: clamp(18px, 3vw, 44px);
     list-style: none;
   }
-  nav a {
+  .primary-nav a {
     position: relative;
     color: var(--ink);
     text-decoration: none;
     font-size: 13px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    letter-spacing: 0.04em;
     padding: 6px 2px;
     filter: url(#wobble);
     transition: color 220ms ease;
   }
-  nav a::after {
+  .primary-nav a.active {
+    font-weight: 600;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 4px;
+  }
+  .primary-nav a::after,
+  .secondary-nav a::after,
+  .icon-btn::after {
     content: "";
     position: absolute; inset: 0;
     background: var(--caustic-bg);
     background-size: 200px 200px;
     mix-blend-mode: overlay;
-    opacity: 0.55;
+    opacity: 0.5;
     pointer-events: none;
     animation: drift 32s linear infinite;
   }
-  nav a:hover { color: #fff; }
-  nav a:hover::after { opacity: 0.95; animation-duration: 12s; }
+  .primary-nav a:hover { color: #fff; }
+  .primary-nav a:hover::after { opacity: 0.9; animation-duration: 12s; }
+
+  /* — icon buttons (right side) — */
+  .icons {
+    display: flex;
+    gap: 18px;
+    flex: 0 0 auto;
+  }
+  .icon-btn {
+    position: relative;
+    width: 28px; height: 28px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    color: var(--ink);
+    background: none;
+    border: none;
+    cursor: pointer;
+    filter: url(#wobble);
+  }
+  .icon-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+  /* — secondary nav (bottom row) — */
+  .section-tag {
+    font-size: 11px;
+    letter-spacing: 0.36em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    flex: 0 0 auto;
+    padding-right: 8px;
+    filter: url(#wobble);
+  }
+  .secondary-nav {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1.6vw, 24px);
+    list-style: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .secondary-nav::-webkit-scrollbar { display: none; }
+  .secondary-nav a {
+    position: relative;
+    color: var(--ink-dim);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    padding: 6px 2px;
+    filter: url(#wobble);
+    transition: color 200ms ease;
+  }
+  .secondary-nav a.pill {
+    color: var(--ink);
+    background: rgba(120, 220, 200, 0.18);
+    border: 1px solid rgba(120, 220, 200, 0.45);
+    border-radius: 999px;
+    padding: 6px 16px;
+  }
+  .secondary-nav a:hover { color: var(--ink); }
+
+  .search {
+    position: relative;
+    flex: 0 0 clamp(180px, 22vw, 280px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--ink-dim);
+    filter: url(#wobble);
+  }
+  .search svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+  .search input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--ink);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .search input::placeholder { color: var(--ink-dim); }
 
   /* ─── hero copy ──────────────────────────────────────────────────── */
   .stage {
@@ -295,17 +404,53 @@
   <canvas id="back-canvas"  aria-hidden="true"></canvas>
 
   <div class="ui">
-    <header class="nav">
-      <!-- TODO LOGO_TEXT: put real brand here -->
-      <div class="logo">Pelagia</div>
-      <nav>
-        <ul>
-          <li><a href="#explore">Explore</a></li>
-          <li><a href="#species">Species</a></li>
-          <li><a href="#conservation">Conservation</a></li>
-          <li><a href="#contact">Contact</a></li>
+    <header class="header">
+      <!-- TOP ROW: brand · primary nav · account icons -->
+      <div class="header-row top">
+        <a class="brand" href="#">
+          <!-- TODO LOGO_TEXT: replace brand text -->
+          <span class="brand-name">Reptilia<em>Nostra</em></span>
+          <span class="brand-est">EST · MMXIV</span>
+        </a>
+        <ul class="primary-nav">
+          <li><a href="#reptiles">Reptiles</a></li>
+          <li><a href="#birds">Birds</a></li>
+          <li><a href="#cats-dogs">Cats &amp; Dogs</a></li>
+          <li><a href="#plants">Plants</a></li>
+          <li><a class="active" href="#fish">Fish</a></li>
         </ul>
-      </nav>
+        <div class="icons">
+          <button class="icon-btn" aria-label="Account">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          </button>
+          <button class="icon-btn" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9.5C.5 7 4 3 7.5 3c2 0 3.5 1 4.5 2.5C13 4 14.5 3 16.5 3 20 3 23.5 7 21.5 11.5 19 16.5 12 21 12 21z"/></svg>
+          </button>
+          <button class="icon-btn" aria-label="Cart">
+            <svg viewBox="0 0 24 24"><path d="M3 5h2l3 12h11l2-8H6"/><circle cx="9"  cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW: section tag · sub-nav · search -->
+      <div class="header-row bottom">
+        <span class="section-tag">— Fish</span>
+        <ul class="secondary-nav">
+          <li><a class="pill" href="#all">All</a></li>
+          <li><a href="#saltwater">Saltwater Fish</a></li>
+          <li><a href="#freshwater">Freshwater Fish</a></li>
+          <li><a href="#coral">Coral &amp; Invertebrates</a></li>
+          <li><a href="#aquariums">Aquariums</a></li>
+          <li><a href="#filtration">Filtration &amp; Pumps</a></li>
+          <li><a href="#lighting">Lighting</a></li>
+          <li><a href="#liverock">Live Rock &amp; Sand</a></li>
+          <li><a href="#food">Food &amp; Supplements</a></li>
+        </ul>
+        <label class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
+          <input type="search" placeholder="Search the house…" aria-label="Search" />
+        </label>
+      </div>
     </header>
 
     <div class="stage" id="stage">
@@ -330,8 +475,8 @@
   </p>
 </section>
 
-<!-- three.js (CDN) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js"></script>
+<!-- three.js (CDN — r128 is the latest version cdnjs hosts as a single UMD file) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
 /* =====================================================================
@@ -432,7 +577,9 @@ const frontRenderer = new THREE.WebGLRenderer({
 [backRenderer, frontRenderer].forEach(r => {
   r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   r.setSize(W(), H(), false);
-  r.outputColorSpace = THREE.SRGBColorSpace;
+  // r128 uses outputEncoding; r152+ uses outputColorSpace
+  if ('outputColorSpace' in r) r.outputColorSpace = THREE.SRGBColorSpace;
+  else if ('outputEncoding' in r) r.outputEncoding = THREE.sRGBEncoding;
 });
 
 /* ─── lighting (in both scenes — sun + ambient) ─────────────────── */
@@ -1043,7 +1190,7 @@ function emitBurst(worldPos) {
   }
 }
 heroEl.addEventListener('click', e => {
-  if (e.target.closest('a, button, .cta, nav')) return;
+  if (e.target.closest('a, button, .cta, .header')) return;
   const rect = heroEl.getBoundingClientRect();
   _ndc.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
   _ndc.y = -((e.clientY - rect.top ) / rect.height) * 2 + 1;
@@ -1054,7 +1201,7 @@ heroEl.addEventListener('click', e => {
 });
 
 /* nav link hover → puff of bubbles */
-document.querySelectorAll('nav a').forEach(a => {
+document.querySelectorAll('.primary-nav a, .secondary-nav a').forEach(a => {
   a.addEventListener('mouseenter', () => {
     const rect = a.getBoundingClientRect();
     const heroRect = heroEl.getBoundingClientRect();
