@@ -496,15 +496,68 @@
     .cursor-dot, .cursor-ring { display: none; }
   }
 
-  /* ─── vignette ───────────────────────────────────────────── */
+  /* ─── strong vignette (hide reef edges) ──────────────────── */
   .vignette {
     position: absolute; inset: 0;
     z-index: 7;
     pointer-events: none;
-    background: radial-gradient(ellipse at center,
-      transparent 50%,
-      rgba(0, 4, 16, 0.7) 100%);
-    mix-blend-mode: multiply;
+    background:
+      /* heavy outer darkening to hide the reef's outer "void" */
+      radial-gradient(ellipse 75% 70% at center,
+        transparent 0%,
+        transparent 35%,
+        rgba(0, 6, 18, 0.55) 75%,
+        rgba(0, 4, 12, 0.95) 100%),
+      /* strong top fade so the reef blends into deep water above */
+      linear-gradient(180deg,
+        rgba(0, 8, 22, 0.85) 0%,
+        rgba(0, 8, 22, 0.30) 18%,
+        transparent 35%,
+        transparent 65%,
+        rgba(0, 4, 12, 0.45) 88%,
+        rgba(0, 4, 12, 0.85) 100%),
+      /* side fades to mask the iframe edges */
+      linear-gradient(90deg,
+        rgba(0, 4, 12, 0.55) 0%,
+        transparent 14%,
+        transparent 86%,
+        rgba(0, 4, 12, 0.55) 100%);
+  }
+
+  /* ─── organic silhouette frame (reef rocks + kelp at edges) ─── */
+  .frame-top, .frame-bottom, .frame-left, .frame-right {
+    position: absolute;
+    pointer-events: none;
+    z-index: 7;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+  .frame-top {
+    top: 0; left: 0; right: 0;
+    height: 28%;
+    /* hanging rocks/kelp silhouette from the top */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 400' preserveAspectRatio='none'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23000610' stop-opacity='1'/><stop offset='70%' stop-color='%23000610' stop-opacity='0.85'/><stop offset='100%' stop-color='%23000610' stop-opacity='0'/></linearGradient></defs><path fill='url(%23g)' d='M0,0 L1600,0 L1600,180 C1500,200 1450,170 1400,210 C1350,250 1320,200 1280,230 C1240,260 1210,210 1170,250 C1130,290 1100,230 1060,260 C1020,300 980,240 940,280 C900,320 870,260 830,290 C790,330 760,270 720,310 C680,350 640,280 600,310 C560,340 520,280 480,310 C440,340 400,270 360,300 C320,330 280,260 240,290 C200,320 160,250 120,280 C80,310 40,240 0,260 Z'/></svg>");
+  }
+  .frame-bottom {
+    bottom: 0; left: 0; right: 0;
+    height: 26%;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 400' preserveAspectRatio='none'><defs><linearGradient id='g' x1='0' y1='1' x2='0' y2='0'><stop offset='0%' stop-color='%23000610' stop-opacity='1'/><stop offset='70%' stop-color='%23000610' stop-opacity='0.8'/><stop offset='100%' stop-color='%23000610' stop-opacity='0'/></linearGradient></defs><path fill='url(%23g)' d='M0,400 L1600,400 L1600,260 C1560,240 1520,280 1480,250 C1440,220 1400,270 1360,240 C1320,210 1280,260 1240,230 C1200,200 1160,250 1120,220 C1080,190 1040,240 1000,210 C960,180 920,230 880,200 C840,170 800,220 760,190 C720,160 680,210 640,180 C600,150 560,200 520,170 C480,140 440,190 400,160 C360,130 320,180 280,150 C240,120 200,170 160,140 C120,110 80,160 40,130 C20,118 10,140 0,150 Z'/></svg>");
+  }
+  .frame-left {
+    top: 0; left: 0;
+    width: 16%; height: 100%;
+    background: linear-gradient(90deg,
+      rgba(0, 4, 12, 0.85) 0%,
+      rgba(0, 4, 12, 0.45) 35%,
+      transparent 100%);
+  }
+  .frame-right {
+    top: 0; right: 0;
+    width: 16%; height: 100%;
+    background: linear-gradient(270deg,
+      rgba(0, 4, 12, 0.85) 0%,
+      rgba(0, 4, 12, 0.45) 35%,
+      transparent 100%);
   }
 
   /* ─── below the fold ──────────────────────────────────────── */
@@ -634,7 +687,13 @@
   <!-- 7. front bubbles (above UI) -->
   <div class="bubbles front" id="bubblesFront" aria-hidden="true"></div>
 
-  <!-- 8. vignette -->
+  <!-- 8. organic silhouette frame (hides reef's "void" edges) -->
+  <div class="frame-left"   aria-hidden="true"></div>
+  <div class="frame-right"  aria-hidden="true"></div>
+  <div class="frame-top"    aria-hidden="true"></div>
+  <div class="frame-bottom" aria-hidden="true"></div>
+
+  <!-- 9. vignette -->
   <div class="vignette" aria-hidden="true"></div>
 </div>
 
@@ -765,9 +824,9 @@ function makeBubble(layer, sizeRange, durRange) {
 if (!reduce) {
   const back  = document.getElementById('bubblesBack');
   const front = document.getElementById('bubblesFront');
-  const counts = isMobile ? { back: 28, front: 8 } : { back: 70, front: 18 };
-  for (let i = 0; i < counts.back;  i++) makeBubble(back,  [4, 14], [10, 22]);
-  for (let i = 0; i < counts.front; i++) makeBubble(front, [10, 28], [7, 14]);
+  const counts = isMobile ? { back: 60, front: 25 } : { back: 160, front: 50 };
+  for (let i = 0; i < counts.back;  i++) makeBubble(back,  [3, 12], [8, 20]);
+  for (let i = 0; i < counts.front; i++) makeBubble(front, [8, 28], [5, 12]);
 }
 
 /* ─── 5. mouse parallax (layered drift, 3D scene rotates itself) ─── */
