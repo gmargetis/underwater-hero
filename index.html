@@ -106,7 +106,7 @@
   /* ─── 3. animated SVG fish silhouettes (foreground school) ─── */
   .fish-layer {
     position: absolute; inset: 0;
-    z-index: 2;
+    z-index: 4;
     pointer-events: none;
     overflow: hidden;
     will-change: transform;
@@ -149,22 +149,24 @@
   /* ─── 4. bubbles (CSS particles) ────────────────────────────── */
   .bubbles {
     position: absolute; inset: 0;
-    z-index: 3;
+    z-index: 5;            /* in front of vignette/frame so they actually show */
     pointer-events: none;
     overflow: hidden;
   }
-  .bubbles.front { z-index: 6; }
+  .bubbles.front { z-index: 8; }
   .bubble {
     position: absolute;
     bottom: -40px;
     border-radius: 50%;
     background:
       radial-gradient(circle at 35% 30%,
-        rgba(255,255,255,0.85) 0%,
-        rgba(220,240,255,0.35) 40%,
-        rgba(180,220,240,0.10) 70%,
+        rgba(255,255,255,1)    0%,
+        rgba(220,240,255,0.55) 35%,
+        rgba(180,220,240,0.18) 70%,
         transparent           100%);
-    box-shadow: inset 0 0 4px rgba(255,255,255,0.4);
+    box-shadow:
+      inset 0 0 6px rgba(255,255,255,0.6),
+      0 0 8px rgba(180, 230, 255, 0.25);
     will-change: transform, opacity;
     animation-name: bubbleRise;
     animation-iteration-count: infinite;
@@ -181,7 +183,7 @@
   .ui {
     position: absolute;
     inset: 0;
-    z-index: 5;
+    z-index: 6;
     display: flex;
     flex-direction: column;
     pointer-events: none;
@@ -499,7 +501,7 @@
   /* ─── strong vignette (hide reef edges) ──────────────────── */
   .vignette {
     position: absolute; inset: 0;
-    z-index: 7;
+    z-index: 4;            /* behind UI (5), in front of fish back (2) */
     pointer-events: none;
     background:
       /* heavy outer darkening to hide the reef's outer "void" */
@@ -528,7 +530,7 @@
   .frame-top, .frame-bottom, .frame-left, .frame-right {
     position: absolute;
     pointer-events: none;
-    z-index: 7;
+    z-index: 4;            /* behind the UI (5) so the header stays clickable */
     background-repeat: no-repeat;
     background-size: 100% 100%;
   }
@@ -682,7 +684,7 @@
   </div>
 
   <!-- 6. front fish (closer to camera, above UI text) -->
-  <div class="fish-layer" id="fishFront" style="z-index: 6;" aria-hidden="true"></div>
+  <div class="fish-layer" id="fishFront" style="z-index: 7;" aria-hidden="true"></div>
 
   <!-- 7. front bubbles (above UI) -->
   <div class="bubbles front" id="bubblesFront" aria-hidden="true"></div>
